@@ -24,11 +24,12 @@ The consultative process that has produced this HL7 informative specification re
 The proposed model essentially outlines a series of specific “context of use definitions” of sex and gender types and outlines required information for each potential use-based collection of specified sex and or gender codes. The sex and gender types we have included illustrate how sex- gender codes, when captured in a prescribed context, clarify the capture of patient clinical information. Some of the noted contexts of use may represent single or multiple information sources such as chromosomal allosomes, genotype, hormone levels, secondary sex characteristics, desired perception, surgical status or planned outcome, organ function, etc. It is clear that a single patient may have multiple different codes properly represent them when capturing multiple sex- gender types.
 
 As a result, the in-scope core list of specific gender and sex use-contexts described by the specification, are as follows:
-1. Gender Identity (GI)
-2. Sex for Clinical Use (SFCU)
-3. Recorded Sex and Gender
-4. Name to Use
-5. Pronouns
+
+|1. Gender Identity (GI)|
+|2. Sex for Clinical Use (SFCU)|
+|3. Recorded Sex and Gender|
+|4. Name to Use|
+|5. Pronouns|
 
 #### Out-of-Scope
 The Gender Harmony Project considered other data elements or attributes for the specification but has deferred those for future consideration because these categories did not meet the rigor necessary for Balloting at the present time.
@@ -171,8 +172,9 @@ The proposed model provides necessary constructs to more accurately capture sex 
 ### Contextual Definitions of Sex and Gender Identity
 Each of the following sections is structured to align with the UML Model categories noted in Figure 1. Each of the sub-sections below provides a definition, description, usage notes (if applicable), cardinality, and attributes (with recommended terminology if applicable) for each in-scope context definition.
 
+<img src="context_model_gender.png" alt="Context Model for Gender Identity and Sex" width="100%" />
+*Figure 1 Context Model for Gender Identity and Sex*
 
-Figure 1 Context Model for Gender Identity and Sex
 #### Model Overview
 The model introduces the attributes: Sex for Clinical Use (SFCU), Gender Identity, Recorded Sex or Gender, Pronouns, and Name to Use. These are attributes of a Person.
 
@@ -208,10 +210,11 @@ Cardinality: 0..n
 Attributes:
 Gender
     Definition: See element Definition Cardinality 1..1
-    Type: Code or constrained short text Proposed Terminology:
-    minValueSet: GenderIdentity valueSet
-    binding Strength: extensible
-    See Appendix 1 — Proposed Value Sets for the recommended content.
+    Type: Code or constrained short text 
+    Proposed Terminology:
+        minValueSet: GenderIdentity valueSet
+        binding Strength: extensible
+        See Appendix 1 — Proposed Value Sets for the recommended content.
 Validity Period
     Definition: The time frame during which this gender identity applies to the person. May be just an initial dateTime.
     Usage note: Validity period may be overlapping in the case of multiple gender identities (such as for bigender persons, some genderfluid persons, and binary Two-Spirit persons who also identify as male or female).
@@ -220,3 +223,769 @@ Validity Period
 Comment
     Definition: Text to further explain the use of the specified gender identity or identities. Usage note: Content included may be related to social and/or cultural context to be considered when using the gender identity, particularly with overlapping active values. Cardinality: 0..1
     Type: long text
+
+### Sex for Clinical Use (SCFU)
+**Definition**: A category that is based upon clinical observations typically associated with the designation of male and female.
+**Usage Note(s)**: A sex category that supports context specificity, derived from observable information (e.g., Clinical Observation, Radiology report, Lab report, genetic testing) that is preferably directly linked to the information this element summarizes (such as a comment or a linked data observation) in order to clarify the context and resulting value. This element is intended to characterize observations that align with or vary from female or male when the observation(s) are intended for use in a clinical activity. Examples of clinical observation that may be used to determine a value are: karyotype, phenotype, sex from imaging, hormonal values, organ inventory, certain surgical procedures, genetic observations, external genital morphology and internal organ morphology. In some systems the SFCU value may be automatically determined based on the medical record so that they match the recipient system’s needs.
+
+There may be restrictions on specific protocols or for specific targets. The value multiplicity for a specific protocol or target may be 1..1 or 0..1. This logical model does not specify how such restrictions should be implemented. They should reflect the purpose of the communication and the capabilities of the systems involved. This may require individual site specific business rules to map a multi-valued SFCU into a single value that is appropriate for this context.
+
+The SFCU value is not defined for use outside of a specific clinical context and should never be used as a label for the patient as a whole. Because the SFCU can be context-specific, on rare occasions there may be more than one concurrent SFCU for a patient. For example, there could be multiple procedure results, each identifying a context specific SFCU determination used to set the normal range used. For example an SFCU value and linked comment or specific observation could be summarized as “male, based on hormonal measurement.”
+
+**Cardinality**: 0..n, expected to be zero unless in a clinical context.
+
+**Attributes**:
+    SFCU Category
+    Definition: Sex value based on clinical observations. Cardinality: 1..1
+    Type: Code or constrained short text
+    Proposed Terminology:
+        minValueSet: SexForClinicalUseCategory valueSet
+        binding Strength: required
+        See Appendix 1 — Proposed Value Sets for the recommended content
+
+    Validity Period
+    Definition: Time frame during which this summary value applies to the patient. May be just an initial dateTime
+    Usage Note: Validity period may overlap among different SFCU values based on procedure or process used to determine the value
+    Cardinality: 0..1 
+    Type: duration
+    
+    Comment
+    Definition: Text to further explain the context for this specific SFCU categorization. Usage note: Content included may be related to social and/or cultural context to be considered or additional information related to the linked observations, particularly with overlapping active values
+    Cardinality: 0..1
+    Type: long text
+    
+    Linked Clinical Observation
+    Definition: Link or identifier to observation(s) or report(s) that are used to determine the sex category value
+    Usage Note: The specific implementation of these links will vary based on the standard used. The linked information should clearly align with the chosen SFCU. For example, a patient with an initial diagnosis of an intersex condition could have supporting clinical observations specific to the diagnosis. Additional information may be provided in the Comment attribute.
+    Cardinality: 0..n 
+    Type: string
+    
+    Note: This logical model does not specify the encoding mechanism for a link. It could be a DOI, a URL, a DICOM SCOORD-3D, etc. The specific standards and implementations will specify this.
+
+### Recorded Sex or Gender
+Definition: Documentation of a specific instance of sex and/or gender information.
+Usage Note: This element is to be used to differentiate existing poorly specified sex or gender data, and new context-laden sex or gender information, from the other proposed sex and gender information in this specification. This element is to be used for an existing “sex” element in a document or record when the intent and meaning is unclear so that existing data is preserved but separated from the other proposed but very specific sex and gender information. A single patient may have zero to many such attributes. For example, the person's birth certificate information, passport information, and national identity document information may all be present. This is necessary because an individual’s identity documents may be updated at different rates or for different reasons. For instance, a trans woman may be able to update her driver’s license to ‘F’ but her state might not allow changing a value on her birth certificate, which may still read ‘M’. Sex assigned at birth (SAAB)5, while very common and considered essential in some jurisdictions, is considered a recorded sex and gender entry. In these cases, the “identity type” could be specified as “sex assigned at birth” or another regionally specific short text string.
+Cardinality: 0..n
+
+Attributes:
+    Source Recorded Sex or Gender
+    Definition: The actual value found on the document. This may be in any character set. For
+    example. a Russian identity card might have the value ‘ж’ for sex. Cardinality: 1..1
+    Type: Code or constrained short text
+
+    International Equivalent Recorded Sex or Gender
+    Definition: An international representation of the value found on the document. This should be recorded in ISO/IEC 8859-1 (Latin 1) or equivalent. For example. a Russian identity card might have the value ‘ж’ for sex which is the source value, but the international equivalent would be ‘F’ for interoperability and international legal purposes, as outlined in documentation by the International Civil Aviation Organization (ICAO) [89]. Cardinality: 0..1
+    Type: Code or constrained short text 
+    Proposed Terminology:
+        minValueSet: RecordedSexOrGender InternationalEquivalent valueSet binding Strength: extensible
+        See Appendix 1 — Proposed Value Sets for the recommended content.
+   
+    Record Description
+    Definition: A short phrase that describes the document or record that includes the sex or gender value. E.g., national ID card, birth certificate, passport.
+    Cardinality: 0..1
+    Type: string
+
+    Acquisition Date
+    Definition: The date that the document was scanned, processed, etc. to extract the sex or gender information.
+    Cardinality: 0..1
+    Type: datetime
+
+    Validity Period
+    Definition: The time frame during which the document is valid. May be just an initial dateTime.
+    Cardinality: 0..1
+    Type: duration
+
+    Jurisdiction
+    Definition: Jurisdiction or organization that issued the document Cardinality: 0..1
+    Type: string
+    
+    Source Field Name
+    Definition: Name of the source field on the document.
+    Usage Note: This may be in any characters set. For example, on a Russian identity card it could be ‘Пол’.
+    Cardinality: 0..1
+    Type: string
+    
+    Source Field Description
+    Definition: A description of the source field or source fields on the document.
+    Usage Note: Further description of the source field to clarify intent of meaning. This may be a link or an external reference. For example, there is an international standard for the fields on an international travel passport.
+    Cardinality: 0..1
+    Type: string
+
+### Name to Use
+Definition: Text attribute that provides the name that should be used when addressing or referencing the patient.
+Usage Note(s): This information is usually provided by the patient. Depending on the standard applicable to an implementation, this might be encoded within a Person/Patient Name field with an appropriate name type qualifier but is independent of any other name type or name component. This may be a nickname or formal name. Multiple cardinalities are required to support changes in desired name over time, such as when a patient desires a change in name to align with expressed gender. This means a validity period and a comment attribute to allow text that can be used to capture context for use of the name.  
+Cardinality: 0..n
+
+Attributes:
+    Name
+    Definition: Name to Use when addressing or referencing the patient. Cardinality: 1..1
+    Type: string
+
+    Validity Period
+    Definition: The timeframe during which the name is to be used. May just include a start date.
+    Cardinality: 0..1
+    Type: duration
+
+    Comment
+    Definition: Text to further explain use of the Name. This may be related to social and/or cultural context.
+    Cardinality: 0..1
+    Type: long text
+
+### Pronouns
+Definition: Pronoun(s) specified by the patient to use when referring to the patient in speech, in clinical notes, and in written instructions to caregivers.
+Usage Note(s): Personal pronouns are words used instead of a noun or a noun phrase used to refer to people. Understanding which pronoun(s) to use when referring to someone is important for providing affirming health care. Avoiding incorrect pronoun use and patient misgendering is crucial in transgender and gender-diverse care. It is important to reliably exchange personal pronouns that the individual has specifically reported they want used. The information could be considered a primary (first class) element associated with the demographic information for the patient. However, it may require representation as an observation about the patient. See also CDC’s pronoun recommendations (79); and Affirming Transgender Youths’ Names and Pronouns in the Electronic Medical Record (80) for additional context. Local policy will determine how pronouns are chosen for infants and other similar situations. Policy and local custom will determine what to use when this attribute is not present, or when multiple are present.
+
+Different pronouns may be used in one care setting than another care setting. The pronouns used in the work environment may be different than those in the care setting.
+Cardinality: 0..n 
+
+Attributes:
+    Pronoun
+    Definition: The noun or a noun phrase used for the patient.
+    Cardinality 1..1
+    Type: Code or constrained short text Proposed Terminology:
+    minValueSet: Pronoun valueSet
+    binding Strength: extensible
+    See Appendix 1 — Proposed Value Sets for the recommended content.
+    
+    Validity Period
+    Definition: The timeframe during which the pronoun is to be used. May just include a start date.
+    Cardinality: 0..1
+    Type: duration
+    
+    Comment
+    Definition: Text to further explain use of the pronoun.
+    Usage Note: Multiple pronoun entries may exist and overlap as some persons utilize multiple pronouns simultaneously or switch usage based on context, familiarity, comfortability, and/or gender identity (for instance, in the case of bigender or genderfluid persons).
+    Cardinality: 0..1
+    Type: long text
+
+## Implementation Guidance
+### FHIR
+FHIR has a change proposal (FHIR-29673) to update the sex and gender guidance in the Patient resource to support the various sex and gender properties. That proposal should be expanded to include other non-patient person resources, such as Person, RelatedPerson, and Practitioner. The Patient resource Patient Gender and Sex section includes:
+- Two representations of Gender:
+    - An extension on the Patient resource for Gender Identity. As noted in the text, this primary resource element does not provide the ability to represent context, history, and multiplicity that aligns with the Gender Harmony Gender Identity model. Yet, as a transitional process, it is recognized that capturing a single current Gender Identity using this existing extension may be of incremental value. We suggest:
+        - Clarifying that this extension should be used only when a single pervasive Gender Identity is chosen by a patient.
+        - That extension should be added to the other non-patient person resources with the same clarified meaning.
+    - A proposed approach to representing (HL7 FHIR Release 4, 2020) Clinical Gender: as “an observation about the patient, often collected as part of social history documentation, and represented as an Observation using, for example, the LOINC code 76691-5   .” Further it is noted that “Clinical gender observations can provide both history and confidentiality, where the genderIdentity extension does not.”
+        - This approach of creating an observation is aligned with the intent of the Gender Harmony Gender Identity model and may represent the best approach for FHIR representation of the Gender Harmony model.
+        - The example of how Clinical Gender can be captured as a FHIR Observation noted here should be updated by the Orders and Observations WG to fully align.
+In addition, we recommend the following be considered by the appropriate HL7 working groups:
+- A Recorded Sex and Gender Profile on the Observation resource be created that adds
+additional extensions as deemed necessary to support capturing the metadata noted for Recorded Sex and Gender. This profile could then be specifically referenced by the Patient resource, and other resources as appropriate to capture needed sex or gender “demographic observations.”
+    - It may be useful, given the focus on “Sex recorded at birth” or “Birth Sex” that an even more specific Recorded Sex or Gender observation profile be created, perhaps for US Core, specific to “Sex assigned at birth” using LOINC code 76689-9. This aligns with the recommendation existing in the noted section of the Patient resource. There may be some who would argue that birth sex should instead be based on a profile aligned with Sex for Clinical Use; such as discussion is proper and we look forward to a resolution of this in the proper forum.
+    - In a similar way the noted “Legal Sex” discussed in the noted section of the Patient resource should be considered a Recorded Sex or Gender and should utilize this newly created observation profile.
+- A Sex for Clinical Use Profile on Observation be created that adds additional extensions as deemed necessary to support capturing the metadata noted for Sex for Clinical Use (SFCU). This profile could then be specifically referenced by the Patient resource, and other resources as appropriate to capture sex-specific observations.
+- A discussion should be undertaken to determine if the Pronoun model is best represented as a profile on observation in order to provide masking and historical context, or if a new extension directly on the Patient (and other?) resources is best.
+- The FHIR HumanName data type already supports the concept of preferred names across all person resources, so no changes seem to be necessary.
+
+### DICOM
+DICOM has a change proposal cp1927 Patient sex and gender in process to incorporate some of the changes from the HL7 Gender Harmony Project. The present expectation is to revise DICOM
+to:
+- Clarify that the current Patient Sex attribute corresponds to the Sex for Clinical Use element of the Gender Harmony model. The values of “intersex” will be merged with “Complex” and encoded as the original DICOM “Other” category. “Male”, “Female” and “Unknown” can remain as before. This preserves full compatibility with existing medical records archives and equipment. As gender harmonized applications take over upstream ordering this should also reduce inconsistencies. The time frame for this value will be defined to be the time of the order or study as appropriate.
+- Add an optional Patient Gender Identity attribute with the same required and optional value set as described here. The time frame for this value will be defined to be the time of the order or study as appropriate.
+- Add an optional Name to Use attribute.
+- Clarify existing DICOM patient and order comment fields to indicate that when Sex for
+Clinical Use is “complex” these comment fields should provide information explaining relevant information for operators and clinicians. They are presently used for operator instructions, so this usage is a continuation of current usage.
+
+These meet the strategic constraints from DICOM— that the existing medical archives must remain valid without modification, that existing medical devices must remain minimally compliant, and that systems can be upgraded to fully support these changes without introducing dependency on upgrading other equipment.
+
+DICOM plans to synchronize the development and approval of this change proposal with the activity of the Gender Harmony project. DICOM does not presently have a use case for incorporating Recorded Sex and Gender. It is not part of cp1927. When a use case is found it will either be incorporated into cp1927 (if not yet final) or treated as a separate change proposal.
+
+### HL7 v2.x
+HL7 v2 was one of the early messaging standards to encode electronic medical data. Historically, the primary representation of patient-centric sex/gender has occurred via the Patient Identification (PID) segment, Administrative Sex element (PID-8.) The allowed values for PID-8 are defined by values in Table 0001, now represented as a value set (hl7VS-administrativeSex, OID: 2.16.840.1.113883.21.2) and code system (administrativeSex, OID: 2.16.840.1.113883.18.2), but the specific meaning, or context under which the value was obtained, may not have always been clearly understood between trading partners. In other words, sometimes the value may have been a true gender identity, sometimes it may have been the assumed sex based on presentation, sometimes it could have been a recorded sex identified at birth. HL7 FHIR has suggested that a general approach to clarify the specific meaning of an exchanged sex or gender identity value, would be to consider this information as a patient observation, but there are concerns among the community using v2.x that including multiple sex-related values may result in rejection of messages due to multiple or conflicting “sex values.”
+
+Given the technical, societal, and historical considerations involved, interpretation of the value in PID-8 will never be universally consistent across all implementations and uses. Business Partner Agreements, Implementation Guides, and Guidance will allow PID-8 values to be used effectively.
+
+When the HL7 v2.x standards are updated, segments can be updated with new fields to convey needed sex and gender information which might include fields for Sex for Clinical Use, Gender Identity, and Recorded Sex. Not all concepts will be relevant in all contexts. For example, Sex for Clinical Use probably won’t be applicable for individuals represented in a GT1 segment. In the short term, some implementation guides might use OBX segments to convey Gender Identity, Sex for Clinical Use, Recorded Sex and Gender, and Pronouns. Many segments already support a 0..n cardinality on the XPN data type for patient names, which supports various name type codes, including D [Customary Name] for Name to Use.
+
+In the short-term, systems that choose to clarify sex and gender identity information using v2.x messages through the inclusion of the specific sex and gender observations described by the Gender Harmony informative document will need to clarify what specific solution can be universally adopted.
+
+In the long term, solutions that clarify how to pre-adopt patient-centric information such as gender identity, pronouns, and name to use will be the target of subsequent work. In addition, integration of SFCU to support test and procedure-specific interpretations will continue to evolve.
+
+# Appendices
+## Appendix 1 — Proposed Value Sets
+### RecordedSexOrGender InternationalEquivalent Value Set
+*The RecordedSexOrGender valueset has no minimum value set, due to linguistic differences and lack of international standards documentation. Therefore, we have designated an equivalent dataset for the field “International Equivalent,” bound extensible so as to allow specific implementations the option to add more choices via a different, expanded value set that incorporates this minimum set (this accounts for potential options added or planned to be added by various jurisdictions). This set is based on the set noted in Doc 9303: Machine Readable Travel Documents, Seventh Edition (2015), Part 7: Machine Readable Visas published by the International Civil Aviation Organization (ICAO) [89]. Note that a number of other potential designations are discussed in [81].*
+
+<table>
+    <thead>
+        <tr>
+            <th>
+                Term
+            </th>       
+            <th>
+                Definition
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                F
+            </td>
+            <td>
+                *A value which corresponds to female (‘F’) has been recorded in some context.*
+            </td>
+        </tr>
+        <tr>
+            <td>
+                M
+            </td>
+            <td>
+                A value which corresponds to male (‘M’) has been recorded in some context.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                X
+            </td>
+            <td>
+                A value which corresponds to ‘X’ (nonbinary, intersex, etc.) has been recorded or the value is unspecified.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <
+            </td>
+            <td>
+                A value has not been recorded or a value cannot be ascertained for any reason.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+### GenderIdentity Value Set
+GenderIdentity value set to be used as a minimum value set, that is extensible to allow specific implementations the option to add more choices via an expanded value set that incorporates this minimum set.
+
+<table>
+    <thead>
+        <tr>
+            <th>
+                Term
+            </th>       
+            <th>
+                Definition
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                Female
+            </td>
+            <td>
+                A person's self-identification as a woman, as female, or as a girl.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Male
+            </td>
+            <td>
+                A person's self-identification as a man, as male, or as a boy.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Nonbinary
+            </td>
+            <td>
+                Having a specific identity which is nonbinary (not within a binary construct of male or female) or having an identity which falls under the nonbinary umbrella (i.e., any or all gender identities which are not female or male).
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Unknown
+            </td>
+            <td>
+                The person’s gender identity is not known at this time, for any of a variety of reasons. (e.g., “was not able to ask” or “person does not want to answer”.)
+            </td>
+        </tr>
+    </tbody>
+</table>
+When additional codes and terms appropriate to specific jurisdictions, locations, and potentially individual persons are needed, an additional value set should be created that adds in additional concepts. Implementations should be prepared for the addition of other specific gender identities at specific locations. Implementations should be prepared to receive messages or records that contain unrecognized terms. Local policy will establish how to handle unrecognized terms, most likely by preserving the term. Examples of gender identity extensions are given in the non- normative table shown in Appendix 3.
+
+Note that terms like “MTF”, “FTM”, “male-to-female transsexual”, and “female-to-male transsexual”, etc. were not included. Kronk [82] noted in an article with 12 other trans authors in various health care fields that “[t]hese options are antiquated and problematic. The first two (FTM and MTF) have largely fallen out of use among transgender people and in transgender-related literature because they fundamentally assume a ‘change’ in gender—that a transgender person was ‘female’ and now is ‘male’ (FTM), usually due to, or following, some sort of medicalization process (hormone replacement therapy and/or gender affirming surgery, for instance) [91,92,93,94,95]. This contradicts how many trans people understand their identity and can confuse patients. All four terms center cisgender people, reserving unqualified ‘male’ and ‘female’ for them while trans people are segregated into the separate, qualified categories of ‘MTF’, ‘FTM’, ‘transgender male’, ‘transgender female’, and ‘transgender’. Fundamentally, this implies trans women and trans men are deviant and not actually female or male, respectively, especially when the selection is ordered as “male”, “female”, “MTF”, “FTM” [96,97,98]. Further, by separating these groups in the first place, “male” and “female” are presented as the norm while “transgender male” and “transgender female” are othered [96,97,98,99,100]. The separation can insinuate that transgender people are not their stated gender and that separation is cited heavily in transphobic and exclusionary actions [101,102,103]”. In practice, many transgender persons would answer “male” or “female” over “transgender male” or “transgender female”. For more information, see Clair Kronk’s Suggested Tables in Google Docs.
+
+When a person is transgender, intersex, and/or gender-diverse, this is noted by an incongruence between a gender identity datum and a sex for clinical use datum (or data). The specific incongruence can be noted using the Comment and Linked Clinical Observation.
+
+### SexForClinicalUseCategory Value Set
+SexForClinicalUseCategory valueSet should be bound REQUIRED.
+
+<table>
+    <thead>
+        <tr>
+            <th>
+                Term
+            </th>       
+            <th>
+                Definition
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                Female
+            </td>
+            <td>
+                The “female” values apply to this patient, in the case of a given procedure or process in a given context, for instance for a procedure, algorithm, hormone level, organ inventory, etc.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Male
+            </td>
+            <td>
+                The “male” values apply to this patient, in the case of a given procedure or process in a given context, for instance for a procedure, algorithm, hormone level, organ inventory, etc.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Specified
+            </td>
+            <td>
+                This patient has specific documented characteristics that do not fully match either male or female in a given context, for instance for a procedure, algorithm, hormone level, organ inventory, etc.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Unknown
+            </td>
+            <td>
+                The SFCU can not be determined because there are no observations or the observations are not sufficient to determine a value. For example, an emergency trauma case may require treatment before SFCU can be established.
+            </td>
+        </tr>
+    </tbody>
+</table>
+Given that this value set is intended to be a categorization of sex observations with the concept “Specified” as a flag to indicate non-standard sex observations, this value set should be bound required with no other codes allowed.
+
+“Specified” is utilized here instead of terms like intersex for multiple reasons. The phrase intersex is typically a particular grouping of congenital conditions and even when used more generally it would not be considered synonymous or semantically equivalent. “Specified” is used to indicate that this person has specified observations that are lilely important when considering clinical observations, particularly those that are impacted by sex-associated conditions.
+
+While historical, mostly 19th-century, models described gay, lesbian, bisexual, intersex, and transgender persons as “intersexual”, this term (as well as intersex) was not chosen over “specified” because of its more specific scoped usage by providers, researchers, intersex activist groups (including interACT, the Intersex Society of North America, Intersex Initative, Intersex Peer Support Australia, the Intersex Justice Project, and the Intersex Campaign for Equality), and wider activist groups (such as Human Rights Campaign, Human Rights Watch, and ILGA-Europe). One of the authors (Kronk) polled 483 trans people and found that 475 of them did not feel that all trans people were covered using the word “intersex”.
+
+### Pronoun Value Set
+This proposed set is a minimum set for interoperability where the use of the English personal pronoun is required.
+
+<table>
+    <thead>
+        <tr>
+            <th>
+                Term
+            </th>       
+            <th>
+                Definition
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                He, Him, His, Himself
+            </td>
+            <td>
+                English personal pronouns, typically associated with masculinity, that are requested by a person to be used by them.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                She, Her, Hers, Herself
+            </td>
+            <td>
+                English personal pronouns, typically associated with femininity, that are requested by a person to be used by them.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                They, Them, Their, Theirs, Themself
+            </td>
+            <td>
+                English personal pronouns, typically not associated with masculinity or femininity, that are requested by a person to be used by them.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Uses Other Pronouns
+            </td>
+            <td>
+                Person indicates that they use other pronouns than he/him, she/her, or they/them pronouns.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Unknown Pronouns
+            </td>
+            <td>
+                Unknown; used in situations wherein no pronouns can be asked for (young children, infants, neonates, etc.).
+            </td>
+        </tr>
+    </tbody>
+</table>
+The proposed set is based on LOINC answer list for Personal Pronouns - Reported, LL5144-2 Personal pronouns / Answers: 10; Scale: Nom; Code: -; Score: -. TheLOINC value set is acceptable using the canonical url: http://loinc.org/vs/LL5144-2.
+
+## Appendix 2 — Gender Harmony Project Feedback Survey Summary Report
+The Gender Harmony Project Feedback Survey Summary Report can be downloaded here.
+
+The survey entitled “HL7’s Gender Harmony Project Feedback Survey” was a 2020 work product generated by the Gender Harmony Work Group (GHWG) to elicit feedback to proposed vocabulary from the LGBTQIA+ community, clinical and technical stakeholders. Much of the end product was informed based on input gathered through this survey.
+
+The survey was created and managed by Roz Queen, GHWG Member and hosted by Survey Monkey. The survey asked for input on the GHWG proposed set of values when recording Gender Identity in clinical systems. The survey was open until September 30, 2020. Survey participants were informed that the GHWG defines Gender Identity as “an individual’s personal sense of being a man, woman, boy, girl, or something else.” Proposed values were provided, with values highlighted yellow, being the minimum binding for any/all conformant systems.
+
+
+<table>
+    <thead>
+        <tr>
+            <th colspan="3">
+                Table 1. Gender Harmony Project, 2020 Vocabulary Feedback Survey Questions
+            </th>
+        </tr>
+        <tr>
+            <th>
+                Survey Question
+            </th>       
+            <th>
+                Response Type
+            </th>
+            <th>
+                Qualitative Observations/Range*
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                Q1 Is the gender table accurate?
+            </td>
+            <td>
+                Likert-scale (1 - 5)
+            </td>
+            <td>
+                90 responses, from 9% very inaccurate to 29% very accurate
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Q2 Is the gender table list of values complete?
+            </td>
+            <td>
+                Likert-scale
+            </td>
+            <td>
+                87 responses, from 10% not complete at all to 30% very complete
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Q3 How do you feel about the gender table?
+            </td>
+            <td>
+                Open-ended question (O-ER)
+            </td>
+            <td>
+                48 responses, from incomplete, incorrect, confusing (48%) to too complex (31%) and upkeep concern (19%).
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Q4 Should this value set include “Girl” and “Boy”?
+            </td>
+            <td>
+                Likert-scale (Y, N, Other), O-ER (“specify”)
+            </td>
+            <td>
+                88 responses; where 61% indicated “No”, 20% indicated “Yes” and 18% specified “Other”
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Q5 What data elements would you like to see modified? And how?
+            </td>
+            <td>
+                O-ER
+            </td>
+            <td>
+                48 responses; 56% with respect to gender terms/terminology (various concerns)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Q6 What needs improvement? Please mention specific section(s) and/or definition(s)
+            </td>
+            <td>
+                O-ER
+            </td>
+            <td>
+                46 responses; where sentiment analysis revealed the majority of opinions were negative
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Q7 Other comments and/or suggestions
+            </td>
+            <td>
+                O-ER
+            </td>
+            <td>
+                Sentiment analysis illustrated the majority of opinions were negative (84.90% confidence)
+            </td>
+        </tr>
+    </tbody>
+</table>
+*  *Please see report for complete analysis and annotations, too complex to provide in summary view.*
+
+Raw survey data is closed to public viewing.
+
+Clair Kronk, a medical informatician, and Andrea JCL Downey, Lead, 2020 Vocabulary Survey Sub- Committee, conducted the review.
+
+For “fixed” answer responses, quantitative analysis was performed. For “open-ended” responses, both quantitative and qualitative analysis was conducted. A total of 7 questions were analyzed and quantitative analysis graphs produced.
+
+The analysis produced a number of survey design and execution observations which ranged from increasing the sample size in future surveys to putting metrics in place to track where the survey is promoted/distributed. The lack of general sentiment collection and/or respondent demographics was also noted as limiting.
+
+Respondent feedback ranged from the need for more culturally-specific identity terms, definitions for all terms, designing hierarchical classifications systems and providing free-text capacity in clinical EMR data collection. Inclusivity beyond Eurocentric terms to embrace cultural difference/nuance was also noted.
+
+It was noted that creating/adopting a new set of more descriptive tables in accordance with HL7 guidelines is a necessary first step before running a new survey.
+
+Therefore the results of this report should be considered preliminary, at best.
+
+Three recommendations were proposed as outcomes of the Survey Review, and the Gender Harmony Work Group adopted Option 2, to adopt the HL7 Balloting Sub-Committee suggested approach which takes into consideration Clair Kronk’s (2020) Suggested Tables 1, 2, 4 & 6 version 3.3 in Google Docs [81] (please see Appendix 4 for details).
+
+The reader is encouraged to read the complete HL7 Gender Harmony Project Feedback Survey Summary Report under Useful Links on the Work Group’s Confluence Portal.
+
+## Appendix 3 — Additional Data Coding Examples
+The following items are provided as examples that align with the data elements noted within the informative material.
+
+The following tables were created by Clair Kronk. See Suggested Tables in Google Docs [81] for additional detail. These tables include potential extensions to these tables which may be useful in various scenarios. This document includes a 75 other potential values for gender identities, pronoun sets, assigned sex at birth values, among other things. Additionally, it includes usage notes and information to consider in regional implementations.
+
+### Gender Identity (GI)
+<table>
+    <thead>
+        <tr>
+            <th colspan="2">
+                Suggested Codes | Table 2 Gender Identity (GI)
+            </th>
+        </tr>
+        <tr>
+            <th>
+                Concept Code Minimum Value Set
+            </th>       
+            <th>
+                Print Name
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                F
+            </td>
+            <td>
+                Female
+            </td>
+        </tr>
+        <tr>
+            <td>
+                M
+            </td>
+            <td>
+                Male
+            </td>
+        </tr>
+        <tr>
+            <td>
+                X
+            </td>
+            <td>
+                Nonbinary
+            </td>
+        </tr>
+        <tr>
+            <td>
+                O
+            </td>
+            <td>
+                Other
+            </td>
+        </tr>
+        <tr>
+            <td>
+                U
+            </td>
+            <td>
+                Unknown
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+Cases linked to “Unknown” could be theoretically mapped to ‘U’ and specified answers not included here could be linked to ‘O’, but it is recommended to include the other options provided as necessary based on individual clinical use [81].
+
+Kronk [81] also recommends certain additional terms be required in the US and Canada, specifically:
+
+### Name to Use
+Name to Use per [81]:
+> *“This is a person’s name, specifically, the name that they use. This may differ from a patient’s legal name on certain identity documents, from the patient’s name registered with an insurance company, etc., but it is still their name. Do not use terms like “affirmed name”, “chosen name”, or “real name”, or “preferred name” as these imply that a transgender person’s name is somehow lesser than a cisgender (non-transgender) person’s name, and can be chosen to be ignored.”*
+
+### Personal Pronoun Standards
+LOINC provides the following personal pronoun answer list:
+<table>
+    <thead>
+        <tr>
+            <th colspan="2">
+                LOINC Observation: 90778-2 Personal Pronoun Codes
+                LOINC Answer List: LL5144-2 Personal pronouns / Answers: 10; Scale: Nom; Code: -; Score: -
+            </th>
+        </tr>
+        <tr>
+            <th>
+                Answer
+            </th>       
+            <th>
+                ID
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                he/him/his/his/himself
+            </td>
+            <td>
+                LA29518-0
+            </td>
+        </tr>
+        <tr>
+            <td>
+                she/her/her/hers/herself
+            </td>
+            <td>
+                LA29519-8
+            </td>
+        </tr>
+        <tr>
+            <td>
+                they/them/their/theirs/themselves
+            </td>
+            <td>
+                LA29520-6
+            </td>
+        </tr>
+        <tr>
+            <td>
+                ze/zir/zir/zirs/zirself
+            </td>
+            <td>
+                LA29523-0
+            </td>
+        </tr>
+        <tr>
+            <td>
+                xie/hir ("here")/hir/hirs/hirself
+            </td>
+            <td>
+                LA29521-4
+            </td>
+        </tr>
+        <tr>
+            <td>
+                co/co/cos/cos/coself
+            </td>
+            <td>
+                LA29515-6
+            </td>
+        </tr>
+        <tr>
+            <td>
+                en/en/ens/ens/enself
+            </td>
+            <td>
+                LA29516-4
+            </td>
+        </tr>
+        <tr>
+            <td>
+                ey/em/eir/eirs/emself
+            </td>
+            <td>
+                LA29517-2
+            </td>
+        </tr>
+        <tr>
+            <td>
+                yo/yo/yos/yos/yoself
+            </td>
+            <td>
+                LA29522-2
+            </td>
+        </tr>
+        <tr>
+            <td>
+                ve/vis/ver/ver/verself
+            </td>
+            <td>
+                LA29524-8
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+This minimum set of pronouns is suggested by Kronk [81]:
+
+<table>
+    <thead>
+        <tr>
+            <th colspan="2">
+                Suggested Codes | Table 6 Third Person Pronouns
+            </th>
+        </tr>
+        <tr>
+            <th>
+                Concept Code Minimum Value Set
+            </th>       
+            <th>
+                Print Name
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                H
+            </td>
+            <td>
+                he, him, his, himself
+            </td>
+        </tr>
+        <tr>
+            <td>
+                S
+            </td>
+            <td>
+                she, her, hers, herself
+            </td>
+        </tr>
+        <tr>
+            <td>
+                T
+            </td>
+            <td>
+                they, them, their, theirs, themself
+            </td>
+        </tr>
+        <tr>
+            <td>
+                O
+            </td>
+            <td>
+                uses other pronouns
+            </td>
+        </tr>
+        <tr>
+            <td>
+                U
+            </td>
+            <td>
+                Unknown
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+Cases linked to unknown (such as pronouns not stated) could theoretically be mapped to ‘U’ and neopronouns like ze/zir and xie/hir could be linked to ‘O’ in this situation, but it is recommended to include other pronouns provided as necessary based on individual clinical use. Please also note, a patient record may utilize more than one pronoun set.
