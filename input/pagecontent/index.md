@@ -629,7 +629,11 @@ The survey entitled “HL7’s Gender Harmony Project Feedback Survey” was a 2
 
 The survey was created and managed by Roz Queen, GHWG Member and hosted by Survey Monkey. The survey asked for input on the GHWG proposed set of values when recording Gender Identity in clinical systems. The survey was open until September 30, 2020. Survey participants were informed that the GHWG defines Gender Identity as “an individual’s personal sense of being a man, woman, boy, girl, or something else.” Proposed values were provided, with values highlighted yellow, being the minimum binding for any/all conformant systems.
 
-
+<style>
+    table, th, td {
+        border: 1px solid black;
+    }
+</style>
 <table>
     <thead>
         <tr>
