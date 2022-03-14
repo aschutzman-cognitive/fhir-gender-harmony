@@ -72,9 +72,44 @@ publisher:
 # │ input/includes. To use a provided input/includes/menu.xml file, delete the "menu"              │
 # │ property below.                                                                                │
 # ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
+#menu:
+#  Home: index.html
+#  Artifacts: artifacts.html
+
+
+pages:
+  index.md:
+    title: Home
+  model.md:
+     title: Model
+  conformance-general.md:
+    title: Conformance Expectations
+  conformance-profiles.md:
+    title: Profile Conformance
+  cdagenderharmony.md:
+   title: CDA Geneder Harmony
+  hl7v2genderharmony.md:
+   title: V2 Gender Harmony
+  terminology.md:
+    title: Terminology
+  examples.md:
+    title:  Examples
+  change_log.md:
+    title: Change log
 menu:
   Home: index.html
-  Artifacts: artifacts.html
+  Model: model.html
+  CDA Geneder Harmony: cdagenderharmony.html
+  V2 Gender Harmony: hl7v2genderharmony.html
+  Conformance:
+    General Expectations: conformance-general.html
+    Profile Conformance: conformance-profiles.html
+  Terminology: terminology.html
+  Example: examples.html
+  All Artifacts: artifacts.html
+  Change Log: change_log.html
+  History: http://hl7.org/fhir/us/military-service/history.html
+
 
 # ╭───────────────────────────Less Common Implementation Guide Properties──────────────────────────╮
 # │  Uncomment the properties below to configure additional properties on the ImplementationGuide  │
