@@ -96,9 +96,23 @@ pages:
     title:  Examples
   change_log.md:
     title: Change log
+  labratory_use_case.md:
+    title: Laboratory Use Case for transgender woman presenting to laboratory facility for blood draw
+  hysterectomy_use_case.md:
+    title: Transgender man needs hysterectomy and needs procedure approval
+  dicom_use_case.md:
+    title: DICOM
+  health_maintanence_use_case.md:
+    title:  Health Maintanence Use Case
+
 menu:
   Home: index.html
   Model: model.html
+  Use Cases:  
+    Laboratory Use Case: labratory_use_case.html
+    Hysterectomy Use Case: hysterectomy_use_case.html
+    DICOM Use Case: dicom_use_case.html
+    Health Maintanence Use Case: health_maintanence_use_case.html
   CDA Geneder Harmony: cdagenderharmony.html
   V2 Gender Harmony: hl7v2genderharmony.html
   Conformance:
